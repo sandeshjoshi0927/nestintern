@@ -3,6 +3,7 @@ import { Post } from './interfaces/post.interface';
 
 @Injectable()
 export class PostsService {
+  //dummy data
   private readonly posts: Post[] = [
     {
       id: 1,
@@ -42,7 +43,7 @@ export class PostsService {
     {
       id: 6,
       title: 'Post Six',
-      description: 'This is post six',
+      description: 'Description 6',
       content: 'This is content for post six',
       published: new Date('2025-01-06'),
     },
@@ -92,12 +93,17 @@ export class PostsService {
   ): Post[] {
     let filteredPosts = this.posts;
 
+    //searching
     if (search) {
-      filteredPosts = filteredPosts.filter((post) =>
-        post.title.toLowerCase().includes(search.toLowerCase()),
-      );
+      filteredPosts = filteredPosts.filter((post) => {
+        return (
+          post.title.toLowerCase().includes(search.toLowerCase()) ||
+          post.description.toLowerCase().includes(search.toLowerCase())
+        );
+      });
     }
 
+    //sort by and sort order
     if (sortBy && filteredPosts.length > 0) {
       filteredPosts = filteredPosts.sort((a, b) => {
         const valueA = a[sortBy]?.toString().toLowerCase();
@@ -115,6 +121,7 @@ export class PostsService {
       });
     }
 
+    //pagination
     if (page) {
       const start = (page - 1) * limit;
       const end = start + limit;
