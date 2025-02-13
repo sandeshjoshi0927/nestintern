@@ -21,7 +21,7 @@ export class PostsService {
     {
       id: 3,
       title: 'Post Three',
-      description: 'This is post three',
+      description: 'A This is post three',
       content: 'This is content for post three',
       published: new Date('2025-01-03'),
     },
@@ -83,13 +83,11 @@ export class PostsService {
     },
   ];
 
-  //   console(): Post[] {
-  //     return this.posts.sort((a, b) =>
-  //       b.title.toLowerCase().localeCompare(a.title.toLowerCase()),
-  //     );
-  //   }
-
-  findAll(search?: string, sortOrder?: string): Post[] {
+  findAll(
+    search?: string,
+    sortBy: keyof Post = 'title',
+    sortOrder?: string,
+  ): Post[] {
     let filteredPosts = this.posts;
 
     if (search) {
@@ -98,14 +96,16 @@ export class PostsService {
       );
     }
 
-    if (sortOrder) {
-      filteredPosts = filteredPosts.sort((a, b) =>
-        sortOrder === 'ASC'
-          ? a.title.toLowerCase().localeCompare(b.title.toLowerCase())
-          : b.title.toLowerCase().localeCompare(a.title.toLowerCase()),
-      );
-    }
+    if (sortBy && filteredPosts.length > 0) {
+      filteredPosts = filteredPosts.sort((a, b) => {
+        const valueA = a[sortBy]?.toString().toLowerCase();
+        const valueB = b[sortBy]?.toString().toLowerCase();
 
+        return sortOrder === 'ASC'
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA);
+      });
+    }
     return filteredPosts;
   }
 }

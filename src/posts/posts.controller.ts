@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { PostsService } from './posts.service';
-// import { Post } from './interfaces/post.interface';
+import { Post } from './interfaces/post.interface';
 
 @Controller('posts')
 export class PostsController {
@@ -9,8 +9,9 @@ export class PostsController {
   @Get()
   findAll(
     @Query('search') search: string,
+    @Query('sortBy') sortBy: keyof Post,
     @Query('sortOrder') sortOrder: string,
   ) {
-    return this.postsService.findAll(search, sortOrder);
+    return this.postsService.findAll(search, sortBy, sortOrder);
   }
 }
