@@ -11,7 +11,15 @@ export class PostsController {
     @Query('search') search: string,
     @Query('sortBy') sortBy: keyof Post,
     @Query('sortOrder') sortOrder: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
   ) {
-    return this.postsService.findAll(search, sortBy, sortOrder);
+    return this.postsService.findAll(
+      search,
+      sortBy,
+      sortOrder,
+      Number(page),
+      Number(limit),
+    );
   }
 }

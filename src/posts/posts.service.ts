@@ -87,6 +87,8 @@ export class PostsService {
     search?: string,
     sortBy: keyof Post = 'title',
     sortOrder?: string,
+    page: number = 1,
+    limit: number = 5,
   ): Post[] {
     let filteredPosts = this.posts;
 
@@ -101,11 +103,24 @@ export class PostsService {
         const valueA = a[sortBy]?.toString().toLowerCase();
         const valueB = b[sortBy]?.toString().toLowerCase();
 
-        return sortOrder === 'ASC'
-          ? valueA.localeCompare(valueB)
-          : valueB.localeCompare(valueA);
+        if (!valueA || !valueB) return 0;
+
+        if (sortOrder === 'ASC') {
+          return valueA.localeCompare(valueB);
+        } else if (sortOrder === 'DESC') {
+          return valueB.localeCompare(valueA);
+        } else {
+          return 0;
+        }
       });
     }
+
+    if (page) {
+      const start = (page - 1) * limit;
+      const end = start + limit;
+      filteredPosts = filteredPosts.slice(start, end);
+    }
+
     return filteredPosts;
   }
 }
