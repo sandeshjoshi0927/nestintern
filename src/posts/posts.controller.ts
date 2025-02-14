@@ -1,25 +1,19 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { Post } from './interfaces/post.interface';
+// import { Post } from './interfaces/post.interface';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
-  findAll(
-    @Query('search') search: string,
-    @Query('sortBy') sortBy: keyof Post,
-    @Query('sortOrder') sortOrder: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-  ) {
-    return this.postsService.findAll(
-      search,
-      sortBy,
-      sortOrder,
-      Number(page),
-      Number(limit),
-    );
+  async findAll() {
+    // @Query('limit') limit: number, // @Query('page') page: number, // @Query('sortOrder') sortOrder: string, // @Query('sortBy') sortBy: keyof Post, // @Query('search') search: string,
+    return this.postsService.findAll();
+    // search,
+    // sortBy,
+    // sortOrder,
+    // Number(page),
+    // Number(limit),
   }
 }
