@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Post } from './interfaces/post.interface';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PostsService {
+  constructor(@InjectModel('Post') private readonly postModel: Model<Post>) {}
+
   //dummy data
   private readonly posts: Post[] = [
     {
