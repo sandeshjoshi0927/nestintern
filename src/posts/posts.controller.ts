@@ -18,14 +18,20 @@ export class PostsController {
 
   //fetch posts with other functionalities
   @Get()
-  async getPosts(@Query('search') search: string) {
-    // @Query('limit') limit: number, // @Query('page') page: number, // @Query('sortOrder') sortOrder: string, // @Query('sortBy') sortBy: keyof Post,
-    return this.postsService.getPosts(search);
-    // search,
-    // sortBy,
-    // sortOrder,
-    // Number(page),
-    // Number(limit),
+  async getPosts(
+    @Query('search') search: string,
+    @Query('sortBy') sortBy: keyof PostInterface,
+    @Query('sortOrder') sortOrder: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return this.postsService.getPosts(search, sortBy, sortOrder, page, limit);
+  }
+
+  //fetch a single post
+  @Get(':id')
+  async getPost(@Param('id') id: string) {
+    return this.postsService.getPost(id);
   }
 
   //create a post
@@ -43,7 +49,7 @@ export class PostsController {
     return this.postsService.udpate(updatePostDTO, id);
   }
 
-  //delete a post
+  //delete a posts
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<PostInterface | null> {
     return this.postsService.delete(id);

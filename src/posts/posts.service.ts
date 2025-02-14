@@ -5,54 +5,41 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class PostsService {
+  //constructor to inject post model
   constructor(@InjectModel('Post') private readonly postModel: Model<Post>) {}
 
-  //get Posts;
-  async getPosts(search?: string): Promise<Post[]> {
-    // limit: number = 5, // page: number = 1, // sortOrder?: string, // sortBy: keyof Post = 'title', //
-    let filteredPosts = this.postModel.find();
+  //get all Posts;
+  async getPosts(
+    search?: string,
+    sortBy: keyof Post = 'title',
+    sortOrder: string = 'ASC',
+    page?: number,
+    limit?: number,
+  ): Promise<Post[]> {
+    const filteredPosts = this.postModel.find();
+    let filter = {};
 
     //searching
     if (search) {
-      filteredPosts = this.postModel.find({ title: search });
+      filter = { title: { $regex: search, $options: 'i' } };
     }
 
-    // //searching
-    // if (search) {
-    //   filteredPosts = filteredPosts.filter((post) => {
-    //     return (
-    //       post.title.toLowerCase().includes(search.toLowerCase()) ||
-    //       post.description.toLowerCase().includes(search.toLowerCase())
-    //     );
-    //   });
-    // }
+    let skip = 0;
+    if (limit) {
+      skip = page && page > 0 ? (page - 1) * limit : 0;
+    }
 
-    // //sort by and sort order
-    // if (sortBy && filteredPosts.length > 0) {
-    //   filteredPosts = filteredPosts.sort((a, b) => {
-    //     const valueA = a[sortBy]?.toString().toLowerCase();
-    //     const valueB = b[sortBy]?.toString().toLowerCase();
+    return filteredPosts
+      .find(filter)
+      .sort([[sortBy, sortOrder.toUpperCase() === 'ASC' ? 1 : -1]])
+      .skip(skip)
+      .limit(limit ?? 0)
+      .exec();
+  }
 
-    //     if (!valueA || !valueB) return 0;
-
-    //     if (sortOrder === 'ASC') {
-    //       return valueA.localeCompare(valueB);
-    //     } else if (sortOrder === 'DESC') {
-    //       return valueB.localeCompare(valueA);
-    //     } else {
-    //       return 0;
-    //     }
-    //   });
-    // }
-
-    // //pagination
-    // if (page) {
-    //   const start = (page - 1) * limit;
-    //   const end = start + limit;
-    //   filteredPosts = filteredPosts.slice(start, end);
-    // }
-
-    return filteredPosts;
+  //get one post
+  async getPost(id: string): Promise<Post | null> {
+    return await this.postModel.findOne({ _id: id });
   }
 
   //create a post
@@ -62,7 +49,7 @@ export class PostsService {
   }
 
   async udpate(post: Post, id: string): Promise<Post | null> {
-    return await this.postModel.findByIdAndDelete(id, post);
+    return await this.postModel.findByIdAndUpdate(id, post);
   }
 
   async delete(id: string): Promise<Post | null> {
