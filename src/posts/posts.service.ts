@@ -7,90 +7,15 @@ import { Model } from 'mongoose';
 export class PostsService {
   constructor(@InjectModel('Post') private readonly postModel: Model<Post>) {}
 
-  // //dummy data
-  // private readonly posts: Post[] = [
-  //   {
-  //     id: 1,
-  //     title: 'Post One',
-  //     description: 'This is post one',
-  //     content: 'This is content for post one',
-  //     published: new Date('2025-01-01'),
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'A Post One',
-  //     description: 'This is post two',
-  //     content: 'This is content for post two',
-  //     published: new Date('2025-01-02'),
-  //   },
-  //   {
-  //     id: 3,
-  //     title: 'Post Three',
-  //     description: 'A This is post three',
-  //     content: 'This is content for post three',
-  //     published: new Date('2025-01-03'),
-  //   },
-  //   {
-  //     id: 4,
-  //     title: 'Post Four',
-  //     description: 'This is post four',
-  //     content: 'This is content for post four',
-  //     published: new Date('2025-01-04'),
-  //   },
-  //   {
-  //     id: 5,
-  //     title: 'Post Five',
-  //     description: 'This is post five',
-  //     content: 'This is content for post five',
-  //     published: new Date('2025-01-05'),
-  //   },
-  //   {
-  //     id: 6,
-  //     title: 'Post Six',
-  //     description: 'Description 6',
-  //     content: 'This is content for post six',
-  //     published: new Date('2025-01-06'),
-  //   },
-  //   {
-  //     id: 7,
-  //     title: 'Post Seven',
-  //     description: 'This is post seven',
-  //     content: 'This is content for post seven',
-  //     published: new Date('2025-01-07'),
-  //   },
-  //   {
-  //     id: 8,
-  //     title: 'Post Eight',
-  //     description: 'This is post eight',
-  //     content: 'This is content for post eight',
-  //     published: new Date('2025-01-08'),
-  //   },
-  //   {
-  //     id: 9,
-  //     title: 'Post Nine',
-  //     description: 'This is post nine',
-  //     content: 'This is content for post nine',
-  //     published: new Date('2025-01-09'),
-  //   },
-  //   {
-  //     id: 10,
-  //     title: 'Post Ten',
-  //     description: 'This is post ten',
-  //     content: 'This is content for post ten',
-  //     published: new Date('2025-01-10'),
-  //   },
-  //   {
-  //     id: 11,
-  //     title: 'Post Eleven',
-  //     description: 'This is post eleven',
-  //     content: 'This is content for post eleven',
-  //     published: new Date('2025-01-11'),
-  //   },
-  // ];
+  //get Posts;
+  async getPosts(search?: string): Promise<Post[]> {
+    // limit: number = 5, // page: number = 1, // sortOrder?: string, // sortBy: keyof Post = 'title', //
+    let filteredPosts = this.postModel.find();
 
-  async findAll() {
-    // limit: number = 5, // page: number = 1, // sortOrder?: string, // sortBy: keyof Post = 'title', // search?: string,
-    return await this.postModel.find();
+    //searching
+    if (search) {
+      filteredPosts = this.postModel.find({ title: search });
+    }
 
     // //searching
     // if (search) {
@@ -127,6 +52,20 @@ export class PostsService {
     //   filteredPosts = filteredPosts.slice(start, end);
     // }
 
-    // return filteredPosts;
+    return filteredPosts;
+  }
+
+  //create a post
+  async create(post: Post): Promise<Post> {
+    const newPost = new this.postModel(post);
+    return await newPost.save();
+  }
+
+  async udpate(post: Post, id: string): Promise<Post | null> {
+    return await this.postModel.findByIdAndDelete(id, post);
+  }
+
+  async delete(id: string): Promise<Post | null> {
+    return await this.postModel.findByIdAndDelete(id);
   }
 }
